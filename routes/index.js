@@ -1,13 +1,11 @@
 import express from "express";
+import {home} from "./../controllers/homeController.js"
+import {formCrearCuenta} from "./../controllers/userController.js"
 
 const router = express.Router()
 
-router.get('/', (req, res) => {
-    res.render('home')
-})
+router.get('/', home)
 
-router.get('/create-account', (req, res) => {
-    res.render('create-account')
-})
+router.get('/create-account', formCrearCuenta)
 
 export default router
