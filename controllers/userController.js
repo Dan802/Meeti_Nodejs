@@ -1,13 +1,17 @@
 import bcrypt from "bcrypt";
 import { body, validationResult } from "express-validator"; // To validate forms info
 import Users from "../models/Users.js";
+import { sendEmail } from "../handlers/emails.js";
+import { UniqueConstraintError } from "sequelize";
 
+/** userController.js */
 export function formCreateAccount (req, res){
     res.render('create-account', {
         page: 'Create Your Account'
     })
 }
 
+/** userController.js */
 export async function createNewAccount(req, res) {
 
     const {email, userName, password, repeat} = req.body;
@@ -45,14 +49,28 @@ export async function createNewAccount(req, res) {
 
     try {
         // Save the user in the data base
-        await Users.create({
+        const save = await Users.create({
             email,
             userName,
             password, 
             repeat
         })
 
-        req.flash('exito', 'We have sent you an email to confirm your account')
+        // url confirmation
+        const url = `http://${req.headers.host}/confirm-account/${email}`
+
+        // send email confirmation
+        if(save) {
+            await sendEmail({
+                user : {email, userName},
+                url, 
+                subject: "Confirm your meeti's account",
+                file: 'confirm-account'
+            })
+    
+            req.flash('exito', 'We have sent you an email to confirm your account')
+        }
+        
         res.redirect('/login')
 
     } catch (error) {
@@ -70,8 +88,31 @@ export async function createNewAccount(req, res) {
     }
 }
 
+/** userController.js */
+export async function confirmAccount(req, res, next) {
+    // Verify that the user exists
+    const user = await Users.findOne({ where: {email: req.params.mail}})
+
+    if(!user) {
+        req.flash('error', 'The account you are trying to verify does not exist or it is already verified')
+        res.redirect('/create-account')
+        return next()
+    }
+
+    // if exists, activate the account
+    user.active = 1
+    await user.save()
+    req.flash('exito', 'The account has been confirmed, now you can login')
+    res.redirect('/login')
+
+}
+
+/** userController.js */
 export function formLogin(req, res) {
     res.render('login', {
         page: 'Log In'
     })
 }
+
+
+

@@ -10,6 +10,7 @@ import cookieParser from "cookie-parser"; // To work with flash
 import router from "./routes/index.js"
 import db from "./config/db.js"
 import Users from "./models/Users.js";
+import passport from "./config/passport.js" // Login and auth users
 
 // Main application
 const app = express();
@@ -55,6 +56,10 @@ app.use(session({
     resave: false,
     saveUninitialized: false
 }))
+
+// Initialize passport
+app.use(passport.initialize())
+app.use(passport.session())
 
 // Flash messages
 app.use(flash())
