@@ -3,10 +3,11 @@ import {home} from "./../controllers/homeController.js"
 import {formCreateAccount, createNewAccount, confirmAccount, formLogin,  } from "./../controllers/userController.js"
 import {authUser, userAuthenticated} from "./../controllers/authController.js"
 import { panelAdmin } from "../controllers/adminController.js";
-import { formNewGroup, createGroup} from "../controllers/groupsController.js";
+import { formNewGroup, createGroup, uploadImage} from "../controllers/groupsController.js";
 
 const router = express.Router()
 
+//* homeController
 router.get('/', home)
 
 //* userController
@@ -23,6 +24,6 @@ router.get('/admin', userAuthenticated, panelAdmin)
 
 //* groupsController
 router.get('/new-group', userAuthenticated, formNewGroup)
-router.post('/new-group', createGroup)
+router.post('/new-group', uploadImage, createGroup)
 
 export default router
