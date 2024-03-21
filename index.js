@@ -8,9 +8,10 @@ import session from "express-session"; // To work with flash
 import cookieParser from "cookie-parser"; // To work with flash
 
 import router from "./routes/index.js"
-import db from "./config/db.js"
-import Users from "./models/Users.js";
 import passport from "./config/passport.js" // Login and auth users
+
+import db from "./config/db.js" // To sync correctly it is recommended to import the models
+import {Categories, Groups, Users} from "./models/index.js"
 
 // Main application
 const app = express();

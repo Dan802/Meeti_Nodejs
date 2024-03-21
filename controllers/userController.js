@@ -14,11 +14,11 @@ export function formCreateAccount (req, res){
 /** userController.js */
 export async function createNewAccount(req, res) {
 
+    console.log(req.body)
     const {email, userName, password, repeat} = req.body;
 
+    // validate information with express-validator
     const rules = [
-        // The commented rules are verified by the model
-
         // Sanitize the data
         body('email').escape(),
         body('userName').escape(),
@@ -71,7 +71,7 @@ export async function createNewAccount(req, res) {
             req.flash('exito', 'We have sent you an email to confirm your account')
         }
         
-        res.redirect('/login')
+        return res.redirect('/login')
 
     } catch (error) {
 
@@ -84,14 +84,14 @@ export async function createNewAccount(req, res) {
         }
 
         req.flash('error', errorsSequelize)
-        res.redirect('/create-account')
+        return res.redirect('/create-account')
     }
 }
 
 /** userController.js */
 export async function confirmAccount(req, res, next) {
     // Verify that the user exists
-    const user = await Users.findOne({ where: {email: req.params.mail}})
+    const user = await Users.findOne({ where: {email: req.params.mail, active: 0}})
 
     if(!user) {
         req.flash('error', 'The account you are trying to verify does not exist or it is already verified')
@@ -113,6 +113,3 @@ export function formLogin(req, res) {
         page: 'Log In'
     })
 }
-
-
-

@@ -50,4 +50,3 @@ Users.prototype.validatePassword = function(password) {
 }
 
 export default Users
-

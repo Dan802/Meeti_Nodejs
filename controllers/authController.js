@@ -7,3 +7,13 @@ export const authUser = passport.authenticate('local', {
     badRequestMessage: 'Missing credentials'
 })
 
+// Check out if the user is authenticated
+export function userAuthenticated(req, res, next) {
+    
+    // isAuthenticated from passport
+    if(req.isAuthenticated()) {
+        return next()
+    } else {
+        return res.redirect('/login')
+    }
+}
